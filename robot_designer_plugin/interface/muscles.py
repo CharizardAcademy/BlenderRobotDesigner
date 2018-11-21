@@ -142,18 +142,13 @@ def draw(layout, context):
                 row = musclebox.row()
                 if active_muscle != '':
                    row.prop(bpy.data.objects[active_muscle].RobotEditor.muscles, 'muscleType', text='Muscle Type')
-                box.row()
 
              except:
                  pointbox.row()
                  box.row()
                  pass
 
-    box = layout.box()
-    row1 = box.row()
-    # selective display muscle type
-    row1.label("Settings:")
-    row2 = box.row()
-    global_properties.muscle_dim.prop(context.scene, row2, expand=True)
-
-    #infoBox.draw_info()
+    dimensionbox = box.box()
+    dimensionbox.label("Visual Muscle Dimension")
+    row3 = dimensionbox.row()
+    global_properties.muscle_dim.prop(context.scene, row3, expand=True)

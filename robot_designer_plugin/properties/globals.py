@@ -190,6 +190,17 @@ class RDGlobals(PropertyGroupHandlerBase):
                 bpy.data.objects[muscle].data.bevel_depth = self.muscle_dim
                 print("changeing ----")
 
+
+    @staticmethod
+    def selected_muscle_dim_update(self, context):
+        """
+        updates the visualization dimension of the selected muscle in scene
+        """
+        print("in the function")
+        active_muscle = global_properties.active_muscle.get(bpy.context.scene)
+        bpy.data.objects[active_muscle].data.bevel_depth = self.muscle_dim
+        print("changeing ----")
+
     def __init__(self):
         # Holds the current selected kinematics model (armature) name
         self.model_name = PropertyHandler(StringProperty(name='Name', update=self.name_update))
@@ -309,8 +320,8 @@ class RDGlobals(PropertyGroupHandlerBase):
                    ('none', "None", "Show no muscles")],
             update=self.display_muscles))
 
-        self.muscle_dim = PropertyHandler(FloatProperty(name="Muscle Dimension:", default=0.05, update=self.muscle_dim_update))
-
+        #self.muscle_dim = PropertyHandler(FloatProperty(name="Muscle Dimension:", default=0.05, update=self.muscle_dim_update))
+        self.muscle_dim = PropertyHandler(FloatProperty(name="Muscle Dimension:", default=0.05, update=self.selected_muscle_dim_update))
 
 global_properties = RDGlobals()
 global_properties.register(bpy.types.Scene)
