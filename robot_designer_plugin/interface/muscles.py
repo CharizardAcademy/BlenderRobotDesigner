@@ -152,3 +152,5 @@ def draw(layout, context):
     dimensionbox.label("Visual Muscle Dimension")
     row3 = dimensionbox.row()
     global_properties.muscle_dim.prop(context.scene, row3, expand=True)
+
+
