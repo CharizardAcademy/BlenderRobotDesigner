@@ -124,7 +124,9 @@ def assign_the_physics_frame_to_the_bone(context, frame, bone):
 
 def just_create_the_physics_frame(context, name):
     armature = context.active_object
-    bpy.ops.object.empty_add(type='PLAIN_AXES')
+    # this is the empty object for the physics frame
+    #bpy.ops.object.empty_add(type='PLAIN_AXES')
+    bpy.ops.mesh.primitive_cube_add()
     context.active_object.name = name
     context.active_object.RobotEditor.tag = 'PHYSICS_FRAME'
     # set new mass object to cursor location
