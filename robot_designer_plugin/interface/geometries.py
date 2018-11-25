@@ -90,6 +90,9 @@ def draw(layout, context):
         selected_objects = [i for i in context.selected_objects if i.name != context.active_object.name]
         if len(selected_objects):
             obj = bpy.data.objects[global_properties.mesh_name.get(context.scene)]
+            rigid_bodies.RenameGeometry.place_button(box, text='Rename geometry', infoBox=infoBox)
+            box.prop(obj, "rotation_euler", slider=False, text="Rotation")
+            box.prop(obj, "location", slider=False, text="Location")
             box.prop(obj, "scale", slider=False, text="Scale")
             box.prop(selected_objects[0].RobotEditor, 'fileName')
 
