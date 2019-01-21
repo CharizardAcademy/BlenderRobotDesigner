@@ -41,6 +41,7 @@
 
 # Blender imports
 from glob import glob
+import mathutils
 
 import bpy
 from bpy.props import FloatProperty, StringProperty, \
@@ -50,8 +51,13 @@ from bpy.props import FloatProperty, StringProperty, \
 from ..core import PluginManager
 from ..properties.globals import global_properties
 
+import numpy as np
+
 
 # from .globals import global_properties
+
+def raise_error(self, context):
+    self.layout.label("Invalid input!Please check the input mass and inertia!")
 
 @PluginManager.register_property_group()
 class RDDynamics(bpy.types.PropertyGroup):
@@ -74,6 +80,28 @@ class RDDynamics(bpy.types.PropertyGroup):
     inertiaYY = FloatProperty(name="", precision=4, step=0.1, default=1.0)
     inertiaYZ = FloatProperty(name="", precision=4, step=0.1, default=0.0)
     inertiaZZ = FloatProperty(name="", precision=4, step=0.1, default=1.0)
+
+    def scale_update(self, context):
+        obj = context.active_object
+        # obj = context.object
+        if(self.mass < 0
+            or self.inertiaXX < 0 or self.inertiaYY < 0 or self.inertiaZZ < 0
+            or self.inertiaXX + self.inertiaYY < self.inertiaZZ
+            or self.inertiaYY + self.inertiaZZ < self.inertiaXX
+            or self.inertiaZZ + self.inertiaXX < self.inertiaYY):
+            bpy.context.window_manager.popup_menu(raise_error, title="Error", icon='ERROR')
+        else:
+            boxScaleX = np.sqrt(6 * (self.inertiaZZ + self.inertiaYY - self.inertiaXX) / self.mass)
+            boxScaleY = np.sqrt(6 * (self.inertiaZZ + self.inertiaXX - self.inertiaYY) / self.mass)
+            boxScaleZ = np.sqrt(6 * (self.inertiaXX + self.inertiaYY - self.inertiaZZ) / self.mass)
+            bpy.data.objects[obj.name].scale[0] = boxScaleX
+            bpy.data.objects[obj.name].scale[1] = boxScaleY
+            bpy.data.objects[obj.name].scale[2] = boxScaleZ
+
+
+    inertiaXX = FloatProperty(name="", default=1.0, update=scale_update)
+    inertiaYY = FloatProperty(name="", default=1.0, update=scale_update)
+    inertiaZZ = FloatProperty(name="", default=1.0, update=scale_update)
 
 
 

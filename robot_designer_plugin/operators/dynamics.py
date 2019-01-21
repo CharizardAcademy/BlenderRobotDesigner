@@ -274,6 +274,7 @@ class ComputePhysical(RDOperator):
         associations.physics_frame.matrix_world = the_mesh.matrix_world * m_com
 
 
+
     @RDOperator.OperatorLogger
     @RDOperator.Postconditions(ModelSelected)
     def execute(self, context):
@@ -337,3 +338,36 @@ class DetachPhysical(RDOperator):
         current_frame.parent = None
         current_frame.matrix_world = physNode_global
         return {'FINISHED'}
+
+
+class InvalidInertiaScale(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "object.simple_operator"
+    bl_label = "Simple Object Operator"
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
+
+    def execute(self, context):
+        obj = context.object
+        frame = bpy.data.objects[obj.name]
+        d = frame.RobotEditor.dynamics
+        if (d.mass < 0
+                or d.inertiaXX < 0 or d.inertiaYY < 0 or d.inertiaZZ < 0
+                or d.inertiaXX + d.inertiaYY < d.inertiaZZ
+                or d.inertiaYY + d.inertiaZZ < d.inertiaXX
+                or d.inertiaZZ + d.inertiaXX < d.inertiaYY):
+            self.report({'Info'}, 'Invalid input! Please check the parameter!')
+        else:
+            pass
+        return {'FINISHED'}
+
+def register():
+    bpy.utils.register_class(InvalidInertiaScale)
+
+def unregister():
+    bpy.utils.unregister_class(InvalidInertiaScale)
+
+if __name__ == "__main__":
+    register()

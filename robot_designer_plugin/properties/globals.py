@@ -96,6 +96,23 @@ class RDGlobals(PropertyGroupHandlerBase):
                 physics.hide = True
 
     @staticmethod
+    def change_physics(self, context):
+        for physics in [physics for physics in bpy.data.objects if physics.RobotEditor.tag == 'PHYSICS_FRAME']:
+            if self.change_physics_color == True:
+                physics.data.materials.clear()
+                mat = bpy.data.materials.new('MaterialName')
+                mat.diffuse_color = (1.0, 0.0, 1.0)
+                mat.diffuse_shader = 'LAMBERT'
+                mat.diffuse_intensity = 1.0
+
+                mat = bpy.data.materials['MaterialName']
+                physics.data.materials.append(mat)
+
+            else:
+                physics.data.materials.clear()
+
+
+    @staticmethod
     def updateMuscleName(self, context):
 
         SelectMuscle.run(muscle_name=global_properties.active_muscle.get(context.scene))
@@ -201,6 +218,7 @@ class RDGlobals(PropertyGroupHandlerBase):
         bpy.data.objects[active_muscle].data.bevel_depth = self.muscle_dim
         print("changeing ----")
 
+
     def __init__(self):
         # Holds the current selected kinematics model (armature) name
         self.model_name = PropertyHandler(StringProperty(name='Name', update=self.name_update))
@@ -251,6 +269,9 @@ class RDGlobals(PropertyGroupHandlerBase):
         self.physics_type = PropertyHandler(EnumProperty(items=[('PHYSICS_FRAME', 'Mass object', 'Mass object')]))
 
         self.display_physics_selection = PropertyHandler(BoolProperty(name="Show Physics Frames", description="Show or hide physics frames", default=True, update=self.display_physics))
+
+        # change physics frame color
+        self.change_physics_color = PropertyHandler(BoolProperty(name="Change Color of Physics Frames", update=self.change_physics))
 
         # Holds the selection to list connected or unassigned meshes in dropdown menus
         self.list_meshes = PropertyHandler(EnumProperty(

@@ -59,6 +59,8 @@ def draw(layout, context):
 
     settings = layout.row()
     global_properties.display_physics_selection.prop(context.scene, settings)
+    settings2 = layout.row()
+    global_properties.change_physics_color.prop(context.scene, settings2)
 
     box = layout.box()
     box.label("Edit Mass Object")
@@ -102,6 +104,7 @@ def draw(layout, context):
             row2 = box.row(align=True)
             row3 = box.row(align=True)
             row0.label("Inertia Matrix")
+
             row1.prop(frame.RobotEditor.dynamics, "inertiaXX")
             row2.prop(frame.RobotEditor.dynamics, "inertiaXY")
             row3.prop(frame.RobotEditor.dynamics, "inertiaXZ")
@@ -111,6 +114,12 @@ def draw(layout, context):
             row1.prop(frame.RobotEditor.dynamics, "inertiaXZ")
             row2.prop(frame.RobotEditor.dynamics, "inertiaYZ")
             row3.prop(frame.RobotEditor.dynamics, "inertiaZZ")
+
+    #settings = layout.row()
+    #global_properties.change_physics_color.prop(context.scene, settings)
+            
+
+
     except:
         pass
 
