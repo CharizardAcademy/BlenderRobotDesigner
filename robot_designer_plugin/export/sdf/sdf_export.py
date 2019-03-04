@@ -75,6 +75,8 @@ from .generic import sdf_dom
 from pyxb.namespace import XMLSchema_instance as xsi
 import pyxb
 
+from ...properties.objects import RDObjects
+#from ...properties.globals import world_property
 
 
 def _uri_for_meshes_and_muscles(in_ros_package: bool, abs_file_paths, toplevel_dir: str, file_path: str):
@@ -190,6 +192,7 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
     :param toplevel_directory: The directory in which to export
     :param in_ros_package: Whether to export into a ros package or plain files
     :param abs_filepaths: If not intstalled into a ros package decides whether to use absolute file paths.
+    :param world: If world is true, export the link type as fixed and the link attached to the segment
     :return:
     """
 
@@ -269,10 +272,19 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
         print('Axis limit:', child.joint.axis[0].limit)
         print('Axis xyz:', child.joint.axis[0].xyz)
 
+        if(bpy.context.scene.RobotDesigner.world_property == True):
+            print('Test test')
 
-        if segment.parent is None:
+        '''
+        if global_properties.world_property == True:
+            child.joint.type = 'TUM'
+        print(global_properties.world.property)
+        '''
+
+        if segment.parent is None or bpy.context.scene.RobotDesigner.world_property == True:
             #print("Info: Root joint has no parent", segment, segment.RobotEditor.jointMode)
             child.joint.type = 'fixed'
+            #child.joint.parent = bpy.context.scene.RobotDesigner.world_property
         else:
             if segment.RobotEditor.jointMode == 'REVOLUTE':
                 child.joint.axis[0].limit[0].lower.append((radians(
@@ -292,6 +304,7 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
                 child.joint.type = 'ball'
             if segment.RobotEditor.jointMode == 'FIXED':
                 child.joint.type = 'fixed'
+
 
         operator.logger.info(" joint type'%s'" % child.joint.type)
 

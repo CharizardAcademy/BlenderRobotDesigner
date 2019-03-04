@@ -45,7 +45,7 @@ import mathutils
 
 import bpy
 from bpy.props import FloatProperty, StringProperty, \
-    EnumProperty, FloatVectorProperty, PointerProperty, IntProperty, CollectionProperty
+    EnumProperty, FloatVectorProperty, PointerProperty, IntProperty, CollectionProperty, BoolProperty
 
 # RobotDesigner imports
 from ..core import PluginManager
@@ -94,10 +94,15 @@ class RDDynamics(bpy.types.PropertyGroup):
             boxScaleX = np.sqrt(6 * (self.inertiaZZ + self.inertiaYY - self.inertiaXX) / self.mass)
             boxScaleY = np.sqrt(6 * (self.inertiaZZ + self.inertiaXX - self.inertiaYY) / self.mass)
             boxScaleZ = np.sqrt(6 * (self.inertiaXX + self.inertiaYY - self.inertiaZZ) / self.mass)
-            bpy.data.objects[obj.name].scale[0] = boxScaleX
-            bpy.data.objects[obj.name].scale[1] = boxScaleY
-            bpy.data.objects[obj.name].scale[2] = boxScaleZ
-
+            for bone in obj.pose.bones:
+                '''
+                bpy.data.objects[obj.name].scale[0] = boxScaleX
+                bpy.data.objects[obj.name].scale[1] = boxScaleY
+                bpy.data.objects[obj.name].scale[2] = boxScaleZ
+                '''
+                bone.scale[0] = boxScaleX
+                bone.scale[1] = boxScaleY
+                bone.scale[2] = boxScaleZ
 
     inertiaXX = FloatProperty(name="", default=1.0, update=scale_update)
     inertiaYY = FloatProperty(name="", default=1.0, update=scale_update)
@@ -210,6 +215,9 @@ class RDObjects(bpy.types.PropertyGroup):
     objects with respect to the RobotEditor
     '''
     fileName = StringProperty(name="Mesh File Name")
+    # define world here as BoolProperty will cause the HBP module to fail for no reason
+    world = BoolProperty(name="Attach Link to World")
+
     tag = EnumProperty(
         items=[('DEFAULT', 'Default', 'Default'),
                ('MARKER', 'Marker', 'Marker'),
@@ -219,6 +227,7 @@ class RDObjects(bpy.types.PropertyGroup):
                ('CAMERA_SENSOR', 'Camera sensor', 'Camera sensor'),
                ('LASER_SENSOR', 'Laser sensor', 'Laser sensor')]
     )
+
 
     dynamics = PointerProperty(type=RDDynamics)
     camera = PointerProperty(type=RDCamera)

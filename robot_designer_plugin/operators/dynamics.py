@@ -134,6 +134,17 @@ def just_create_the_physics_frame(context, name):
     context.active_object.location = [cursor.x, cursor.y, cursor.z]
     obj = context.active_object
     bpy.context.scene.objects.active = armature  # Restore the active object.
+
+    # change physics frame color
+    obj.data.materials.clear()
+    mat = bpy.data.materials.new('MaterialName')
+    mat.diffuse_color = (1.0, 0.0, 1.0)
+    mat.diffuse_shader = 'LAMBERT'
+    mat.diffuse_intensity = 1.0
+
+    mat = bpy.data.materials['MaterialName']
+    obj.data.materials.append(mat)
+
     return obj
 
 

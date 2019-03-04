@@ -39,6 +39,7 @@ import bpy
 from ..properties.globals import global_properties
 
 
+
 def draw(layout, context):
     """
     Draw method that builds the part of the GUI responsible for the bone submenu.
@@ -47,6 +48,11 @@ def draw(layout, context):
     :param context:
     :return:
     """
+    settings = layout.row()
+    global_properties.display_physics_selection.prop(context.scene, settings)
+
+    settings2 = layout.row()
+    global_properties.world_property.prop(context.scene, settings2)
 
     layout.label("Parent Mode:")
     layout.prop(context.active_bone.RobotEditor, "parentMode", expand=True)

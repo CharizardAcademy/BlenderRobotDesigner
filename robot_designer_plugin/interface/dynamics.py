@@ -59,8 +59,8 @@ def draw(layout, context):
 
     settings = layout.row()
     global_properties.display_physics_selection.prop(context.scene, settings)
-    settings2 = layout.row()
-    global_properties.change_physics_color.prop(context.scene, settings2)
+    #settings2 = layout.row()
+    #global_properties.change_physics_color.prop(context.scene, settings2)
 
     box = layout.box()
     box.label("Edit Mass Object")

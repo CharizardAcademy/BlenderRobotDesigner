@@ -113,6 +113,17 @@ class RDGlobals(PropertyGroupHandlerBase):
 
 
     @staticmethod
+    def attach_world(self, context):
+        obj = context.active_object
+        if self.world_property == True:
+            bpy.data.objects[obj.name].RobotEditor.world = True
+            # export joint with fixed type
+        else:
+            bpy.data.objects[obj.name].RobotEditor.world = False
+
+
+
+    @staticmethod
     def updateMuscleName(self, context):
 
         SelectMuscle.run(muscle_name=global_properties.active_muscle.get(context.scene))
@@ -272,6 +283,9 @@ class RDGlobals(PropertyGroupHandlerBase):
 
         # change physics frame color
         self.change_physics_color = PropertyHandler(BoolProperty(name="Change Color of Physics Frames", update=self.change_physics))
+
+        # attach world property
+        self.world_property = PropertyHandler(BoolProperty(name="Attach Link to World", update=self.attach_world))
 
         # Holds the selection to list connected or unassigned meshes in dropdown menus
         self.list_meshes = PropertyHandler(EnumProperty(
