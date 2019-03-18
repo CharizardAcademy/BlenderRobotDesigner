@@ -501,7 +501,7 @@ class Importer(object):
             CreatePhysical.run(frameName=node.link.name)
             SelectPhysical.run(frameName=node.link.name)
             SelectSegment.run(segment_name=segment_name)
-            AssignPhysical.run()
+            #AssignPhysical.run()
 
             # set mass
             bpy.data.objects[node.link.name].RobotEditor.dynamics.mass = node.link.inertial[0].mass[0]

@@ -227,13 +227,20 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
         child.joint.name = segment.name
         child.link.name = segment.name.replace("_joint", "_link")
 
+        root_names = [b.name for b in context.active_object.data.bones if
+                      b.parent is None]
 
         if segment.parent:
             parent_link = [l for j, l in tree.connectedLinks.items() if segment.parent.name == j.name]
-            if parent_link[0] in tree.connectedJoints:
-                tree.connectedJoints[parent_link[0]].append(child.joint)
-            else:
-                tree.connectedJoints[parent_link[0]] = [child.joint]
+            child_link = [l for j, l in tree.connectedLinks.items() if j.name == root_names[0]]
+            if segment.RobotEditor.world != True:
+                if parent_link[0] in tree.connectedJoints:
+                    tree.connectedJoints[parent_link[0]].append(child.joint)
+                    tree.connectedJoints[child_link[0]].append(child.joint)
+                else:
+                    tree.connectedJoints[parent_link[0]] = [child.joint]
+                    tree.connectedJoints[child_link[0]] = [child.joint]
+
 
         if segment.parent:
             operator.logger.info(" segment parent name'%s'" % segment.parent.name)
@@ -272,19 +279,10 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
         print('Axis limit:', child.joint.axis[0].limit)
         print('Axis xyz:', child.joint.axis[0].xyz)
 
-        if(bpy.context.scene.RobotDesigner.world_property == True):
-            print('Test test')
 
-        '''
-        if global_properties.world_property == True:
-            child.joint.type = 'TUM'
-        print(global_properties.world.property)
-        '''
-
-        if segment.parent is None or bpy.context.scene.RobotDesigner.world_property == True:
-            #print("Info: Root joint has no parent", segment, segment.RobotEditor.jointMode)
+        if segment.parent is None or segment.RobotEditor.world == True:
+            # print("Info: Root joint has no parent", segment, segment.RobotEditor.jointMode)
             child.joint.type = 'fixed'
-            #child.joint.parent = bpy.context.scene.RobotDesigner.world_property
         else:
             if segment.RobotEditor.jointMode == 'REVOLUTE':
                 child.joint.axis[0].limit[0].lower.append((radians(
@@ -304,6 +302,13 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
                 child.joint.type = 'ball'
             if segment.RobotEditor.jointMode == 'FIXED':
                 child.joint.type = 'fixed'
+
+
+        #if segment.RobotEditor.world is True and child.joint.parent is not None:
+        if segment.RobotEditor.world is True:
+            child.joint.parent = ['world']
+        else:
+            pass
 
 
         operator.logger.info(" joint type'%s'" % child.joint.type)
@@ -371,6 +376,8 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
             else:
                 operator.logger.info("No collision model for: %s", mesh)
 
+
+
         frame_names = [
             frame.name for frame in context.scene.objects if
             frame.RobotEditor.tag == 'PHYSICS_FRAME' and frame.parent_bone == segment.name]
@@ -425,10 +432,15 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
         #                                      segment.RobotEditor.jointController.D])
 
         # Add geometry
-        for child_segments in segment.children:
-            operator.logger.info("Next Segment'%s'" % child_segments.name)
-            ref_pose = string_to_list(child.link.pose[0])
-            walk_segments(child_segments, child, ref_pose)
+        if segment.RobotEditor.world != True:
+            for child_segments in segment.children:
+                operator.logger.info("Next Segment'%s'" % child_segments.name)
+                ref_pose = string_to_list(child.link.pose[0])
+                walk_segments(child_segments, child, ref_pose)
+        else:
+            pass
+
+
 
     robot_name = context.active_object.name
 

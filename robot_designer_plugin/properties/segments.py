@@ -41,7 +41,8 @@ from math import radians
 
 # Blender imports
 import bpy
-from bpy.props import FloatProperty, BoolProperty, EnumProperty, PointerProperty
+from bpy.props import FloatProperty, StringProperty, \
+    EnumProperty, FloatVectorProperty, PointerProperty, IntProperty, CollectionProperty, BoolProperty
 
 # RobotDesigner imports
 from ..operators.segments import UpdateSegments
@@ -49,6 +50,11 @@ from ..core import PluginManager
 from ..core.logfile import prop_logger as logger
 
 from .globals import global_properties
+
+from glob import glob
+import mathutils
+
+import numpy as np
 
 
 @PluginManager.register_property_group()
@@ -155,6 +161,18 @@ class RDSegment(bpy.types.PropertyGroup):
     """
     Bone property, contains all relevant bone information for RobotEditor
     """
+    '''
+    def attach_link_to_world(self, context):
+        for segment in context.active_object.data.bones:
+            if global_properties.world_property == True:
+                segment.RobotEditor.world = True
+            else:
+                segment.RobotEditor.world = False
+    '''
+    world = BoolProperty(name="Attach Link to World", default=False)
+
+    #axis_revert = BoolProperty(name="Axis reverted?", default=False, update=callbackSegments)
+
 
     def callbackSegments(self, context):
         armName = context.active_object.name

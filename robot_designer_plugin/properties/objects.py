@@ -215,8 +215,6 @@ class RDObjects(bpy.types.PropertyGroup):
     objects with respect to the RobotEditor
     '''
     fileName = StringProperty(name="Mesh File Name")
-    # define world here as BoolProperty will cause the HBP module to fail for no reason
-    world = BoolProperty(name="Attach Link to World")
 
     tag = EnumProperty(
         items=[('DEFAULT', 'Default', 'Default'),
@@ -227,7 +225,6 @@ class RDObjects(bpy.types.PropertyGroup):
                ('CAMERA_SENSOR', 'Camera sensor', 'Camera sensor'),
                ('LASER_SENSOR', 'Laser sensor', 'Laser sensor')]
     )
-
 
     dynamics = PointerProperty(type=RDDynamics)
     camera = PointerProperty(type=RDCamera)

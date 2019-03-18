@@ -4,7 +4,7 @@ from . import sdf_dom
 from .helpers import list_to_string, string_to_list
 from pyxb import ContentNondeterminismExceededError
 import os
-
+import bpy
 from pprint import pprint
 
 logger = logging.getLogger('SDF')
@@ -82,12 +82,29 @@ class SDFTree(object):
         connected_links = {joint: link for link in robot.link for joint in robot.joint if
                            link.name == joint.child[0]}
 
+        # find joints with parent world
+        world_joints = []
+        non_world_joints = []
+        for joint in robot.joint:
+            if joint.parent == ['world']:
+                world_joints.append(joint)
+            else:
+                non_world_joints.append(joint)
+
+
         # find root links (i.e., links that are NOT connected to a joint)
-        child_links = [link.name for link in robot.link for joint in robot.joint if
-                       link.name == joint.child[0]]
+        child_links = [link.name for link in robot.link for joint in non_world_joints if link.name == joint.child[0]]
+        # original
+        # child_links = [link.name for link in robot.link for joint in robot.joint if link.name == joint.child[0]]
 
         ###  the link, not link name
         root_links = [link for link in robot.link if link.name not in child_links]
+
+
+        print("root links:", root_links)
+
+
+        print("Joints with wolrd parent:", world_joints)
 
         logger.debug("Root links: %s", [i.name for i in root_links])
         logger.debug("connected links: %s", {j.name: l.name for j, l in connected_links.items()})
@@ -179,9 +196,15 @@ class SDFTree(object):
 
         print("root link name: ", self.link.name)
 
+        root_names = [b.name for b in bpy.context.active_object.data.bones if
+                      b.parent is None]
 
         for joint, link in self.connectedLinks.items():
-            joint.child.append(link.name)
+            if bpy.context.active_object.data.bones[link.name].RobotEditor.world != True:
+                joint.child.append(link.name)
+            else:
+                joint.child = root_names
+
 
         for link, joints in self.connectedJoints.items():
             for joint in joints:
