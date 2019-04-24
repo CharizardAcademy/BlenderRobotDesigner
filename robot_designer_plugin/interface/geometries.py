@@ -99,6 +99,18 @@ def draw(layout, context):
         box.separator()
         infoBox.draw_info()
 
+    # basic collision
+    box = ConnectGeometryBox.get(layout, context, "Create Basic Collision Shape", icon="LINKED")
+    if box:
+        row = box.row()
+        column = row.column(align=True)
+        rigid_bodies.CreateBasicCollisionBox.place_button(column, text='Create Box', infoBox=infoBox)
+
+        column = row.column(align=True)
+        rigid_bodies.CreateBasicCollisionCylinder.place_button(column, text='Create Cylinder')
+
+        column = row.column(align=True)
+        rigid_bodies.CreateBasicCollisionSphere.place_button(column, text='Create Sphere')
 
     box = ConnectGeometryBox.get(layout, context, "Attach Geometry", icon="LINKED")
     if box:

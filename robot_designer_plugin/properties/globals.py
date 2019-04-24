@@ -111,7 +111,6 @@ class RDGlobals(PropertyGroupHandlerBase):
             else:
                 physics.data.materials.clear()
 
-
     @staticmethod
     def attach_world(self, context):
         obj = context.active_object
@@ -120,8 +119,6 @@ class RDGlobals(PropertyGroupHandlerBase):
             # export joint with fixed type
         else:
             bpy.data.objects[obj.name].RobotEditor.world = False
-
-
 
     @staticmethod
     def updateMuscleName(self, context):
@@ -355,7 +352,6 @@ class RDGlobals(PropertyGroupHandlerBase):
                    ('none', "None", "Show no muscles")],
             update=self.display_muscles))
 
-        #self.muscle_dim = PropertyHandler(FloatProperty(name="Muscle Dimension:", default=0.05, update=self.muscle_dim_update))
         self.muscle_dim = PropertyHandler(FloatProperty(name="Muscle Dimension:", default=0.05, update=self.selected_muscle_dim_update))
 
 global_properties = RDGlobals()

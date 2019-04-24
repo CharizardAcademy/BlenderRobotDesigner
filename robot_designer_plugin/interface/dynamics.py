@@ -59,32 +59,22 @@ def draw(layout, context):
 
     settings = layout.row()
     global_properties.display_physics_selection.prop(context.scene, settings)
-    #settings2 = layout.row()
-    #global_properties.change_physics_color.prop(context.scene, settings2)
 
     box = layout.box()
     box.label("Edit Mass Object")
     infoBox = InfoBox(box)
     row = box.row()
 
-
-
     single_segment = getSingleSegment(context)
 
-    #menus.MassObjectMenu.putMenu(column, context)
-    # create_geometry_selection(column, context)
     row = box.column(align=True)
 
     dynamics.CreatePhysical.place_button(row,infoBox=infoBox)
     dynamics.ComputePhysical.place_button(row,infoBox=infoBox)
 
-    #dynamics.AssignPhysical.place_button(row,infoBox=infoBox)
-    #dynamics.DetachPhysical.place_button(row,infoBox=infoBox)
-
     objs = [ o for o in context.active_object.children if o.RobotEditor.tag=='PHYSICS_FRAME' and o.parent_bone == single_segment.name ]
     try:
         obj, = objs
-        #obj = getSingleObject(context)
         if obj and obj.RobotEditor.tag=="PHYSICS_FRAME":
             frame_name = obj.name
             box = layout.box()
@@ -115,9 +105,6 @@ def draw(layout, context):
             row2.prop(frame.RobotEditor.dynamics, "inertiaYZ")
             row3.prop(frame.RobotEditor.dynamics, "inertiaZZ")
 
-    #settings = layout.row()
-    #global_properties.change_physics_color.prop(context.scene, settings)
-            
 
 
     except:

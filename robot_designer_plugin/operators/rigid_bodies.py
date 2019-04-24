@@ -44,13 +44,15 @@
 # ######
 # Blender imports
 import bpy
+import bmesh
 from bpy.props import StringProperty, BoolProperty
 # import mathutils
 
 # ######
 # RobotDesigner imports
 from ..core import config, PluginManager, Condition, RDOperator
-from .helpers import ModelSelected, SingleMeshSelected, ObjectMode, SingleSegmentSelected
+from .helpers import ModelSelected, SingleMeshSelected, ObjectMode, SingleSegmentSelected, NotEditMode
+from .model import SelectModel
 
 from ..properties.globals import global_properties
 
@@ -387,5 +389,124 @@ class RenameGeometry(RDOperator):
     def run(cls, new_name=""):
         return super().run(**cls.pass_keywords())
 
+
+@RDOperator.Preconditions(ModelSelected)
+@PluginManager.register_class
+class CreateBasicCollisionBox(RDOperator):
+    bl_idname = config.OPERATOR_PREFIX + "create_basic_collision_box"
+    bl_label = "Create Basic Collision Shape Box"
+
+    @classmethod
+    def run(cls, frameName=""):
+        return super().run(**cls.pass_keywords())
+
+    @RDOperator.OperatorLogger
+    @RDOperator.Postconditions(ModelSelected)
+    def execute(self, context):
+        from . import model
+
+        model_name = context.active_object.name
+        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+        bpy.ops.mesh.primitive_cube_add()
+        context.active_object.name = 'BasicCOL_Cube'
+        bpy.data.objects[context.active_object.name].RobotEditor.tag = 'BASIC_COLLISION_CUBE'
+
+        obj = context.active_object
+
+        obj.data.materials.clear()
+        mat = bpy.data.materials.new('blue')
+        mat.diffuse_color = (0, 0, 1)
+        mat.diffuse_shader = 'LAMBERT'
+        mat.diffuse_intensity = 1.0
+        mat.specular_color = (0.5, 0.5, 0)
+        mat.specular_shader = 'COOKTORR'
+        mat.specular_intensity = 0.5
+        mat.alpha = 0.5
+        mat.ambient = 1
+
+        obj.data.materials.append(mat)
+        bpy.ops.render.render()
+
+        SelectModel.run(model_name=model_name)
+
+        return {'FINISHED'}
+
+@RDOperator.Preconditions(ModelSelected)
+@PluginManager.register_class
+class CreateBasicCollisionCylinder(RDOperator):
+    bl_idname = config.OPERATOR_PREFIX + "create_basic_collision_cylinder"
+    bl_label = "Create Basic Collision Shape Cylinder"
+
+    @classmethod
+    def run(cls, frameName=""):
+        return super().run(**cls.pass_keywords())
+
+    @RDOperator.OperatorLogger
+    @RDOperator.Postconditions(ModelSelected)
+    def execute(self, context):
+        model_name = context.active_object.name
+        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+        bpy.ops.mesh.primitive_cylinder_add()
+        context.active_object.name = 'BasicCOL_Cylinder'
+        bpy.data.objects[context.active_object.name].RobotEditor.tag = 'BASIC_COLLISION_CYLINDER'
+
+        obj = context.active_object
+
+        obj.data.materials.clear()
+        mat = bpy.data.materials.new('blue')
+        mat.diffuse_color = (0, 0, 1)
+        mat.diffuse_shader = 'LAMBERT'
+        mat.diffuse_intensity = 1.0
+        mat.specular_color = (0.5, 0.5, 0)
+        mat.specular_shader = 'COOKTORR'
+        mat.specular_intensity = 0.5
+        mat.alpha = 0.5
+        mat.ambient = 1
+
+        obj.data.materials.append(mat)
+        bpy.ops.render.render()
+
+        SelectModel.run(model_name=model_name)
+
+        return {'FINISHED'}
+
+@RDOperator.Preconditions(ModelSelected)
+@PluginManager.register_class
+class CreateBasicCollisionSphere(RDOperator):
+    bl_idname = config.OPERATOR_PREFIX + "create_basic_collision_sphere"
+    bl_label = "Create Basic Collision Shape Sphere"
+
+    @classmethod
+    def run(cls, frameName=""):
+        return super().run(**cls.pass_keywords())
+
+    @RDOperator.OperatorLogger
+    @RDOperator.Postconditions(ModelSelected)
+    def execute(self, context):
+        model_name = context.active_object.name
+        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+        bpy.ops.mesh.primitive_uv_sphere_add()
+        context.active_object.name = 'BasicCOL_Sphere'
+        bpy.data.objects[context.active_object.name].RobotEditor.tag = 'BASIC_COLLISION_SPHERE'
+
+        obj = context.active_object
+
+        obj.data.materials.clear()
+        mat = bpy.data.materials.new('blue')
+        mat.diffuse_color = (0, 0, 1)
+        mat.diffuse_shader = 'LAMBERT'
+        mat.diffuse_intensity = 1.0
+        mat.specular_color = (0.5, 0.5, 0)
+        mat.specular_shader = 'COOKTORR'
+        mat.specular_intensity = 0.5
+        mat.alpha = 0.5
+        mat.ambient = 1
+
+        obj.data.materials.append(mat)
+        bpy.ops.render.render()
+
+        SelectModel.run(model_name=model_name)
+
+        return {'FINISHED'}
 
 
