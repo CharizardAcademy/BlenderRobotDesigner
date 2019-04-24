@@ -272,15 +272,6 @@ def create_sdf(operator: RDOperator, context, filepath: str, meshpath: str, topl
         print('Axis limit:', child.joint.axis[0].limit)
         print('Axis xyz:', child.joint.axis[0].xyz)
 
-        if(bpy.context.scene.RobotDesigner.world_property == True):
-            print('Test test')
-
-        '''
-        if global_properties.world_property == True:
-            child.joint.type = 'TUM'
-        print(global_properties.world.property)
-        '''
-
         if segment.parent is None or bpy.context.scene.RobotDesigner.world_property == True:
             #print("Info: Root joint has no parent", segment, segment.RobotEditor.jointMode)
             child.joint.type = 'fixed'
